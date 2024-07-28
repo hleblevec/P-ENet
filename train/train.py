@@ -295,25 +295,26 @@ def validate_one(config):
     print(confmat)
     return confmat
 
-def validate_main():
-    config_filename="configs/cityscapes_1000epochs.yaml"
+def validate_main(config_filename, dataset):
     with open(config_filename) as file:
         config=yaml.full_load(file)
-    config["dataset_dir"]="cityscapes_dataset"
+    config["dataset_dir"]=dataset
     config["class_uniform_pct"]=0 # since we're only evalutaing, not training
-    config["pretrained_path"]="checkpoints/cityscapes_exp48_decoder26_train_1000_epochs_run2"
+    config["pretrained_path"]="checkpoints/p-enet_cityscapes_ft_200epochs_run1"
     confmat=validate_one(config)
     return confmat
-def train_main(config_filename, run):
+def train_main(config_filename, dataset, run):
     with open(config_filename) as file:
         config=yaml.full_load(file)
-    config["dataset_dir"]="cityscapes_dataset"
+    config["dataset_dir"]=dataset
     config["run"]=run
     train_one(config)
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-c','--config', type=str, required=True)
+    parser.add_argument('-d','--dataset', type=str, required=True)
     parser.add_argument('-r','--run', type=int, default=1)
     args = parser.parse_args()
-    train_main(args.config, args.run)
+    train_main(args.config, args.dataset, args.run)
+    validate_main(args.config, args.dataset)
