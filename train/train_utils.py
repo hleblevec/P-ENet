@@ -1,6 +1,6 @@
 from losses import BootstrappedCE
 from lr_schedulers import poly_lr_scheduler,cosine_lr_scheduler,step_lr_scheduler,exp_lr_scheduler
-from data import get_cityscapes,get_camvid, build_val_transform,Cityscapes,
+from data import get_cityscapes,get_camvid, build_val_transform,Cityscapes
 import torch
 from model.ENet import ENet
 
