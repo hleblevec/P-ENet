@@ -4,10 +4,9 @@ import torch
 import yaml
 import torch.cuda.amp as amp
 import os
-import copy
 import random
 import numpy as np
-from train_utils import get_lr_function, get_loss_fun,get_optimizer,get_dataset_loaders,get_model,get_val_dataset
+from train_utils import get_lr_function, get_loss_fun,get_optimizer,get_dataset_loaders,get_model
 from precise_bn import compute_precise_bn_stats
 import argparse
 
@@ -264,45 +263,6 @@ def train_one(config):
     print(f"Training time {total_time_str}")
     return best_mIU,best_global_accuracy
 
-def validate_multiple(configs):
-    confmats=[]
-    for config in configs:
-        confmat=validate_one(config)
-        confmats.append(confmat)
-    return confmats
-def validate_one(config):
-    setup_env(config)
-    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    train_loader, val_loader,train_set=get_dataset_loaders(config)
-    model=get_model(config).to(device)
-    mixed_precision=config["mixed_precision"]
-    print_every=config["eval_print_every"]
-    num_classes=config["num_classes"]
-    exclude_classes=config["exclude_classes"]
-    confmat = ConfusionMatrix(num_classes,exclude_classes)
-    max_eval=100000
-    if "max_eval" in config:
-        max_eval=config["max_eval"]
-    loader=val_loader
-    if "validate_train_loader" in config and config["validate_train_loader"]==True:
-        loader=train_loader
-    if config["bn_precise_stats"]:
-        print("calculating precise bn stats")
-        compute_precise_bn_stats(model,train_loader,config["bn_precise_num_samples"])
-    print("evaluating")
-    confmat = evaluate(model, loader, device,confmat,mixed_precision,
-                       print_every,max_eval)
-    print(confmat)
-    return confmat
-
-def validate_main(config_filename, dataset):
-    with open(config_filename) as file:
-        config=yaml.full_load(file)
-    config["dataset_dir"]=dataset
-    config["class_uniform_pct"]=0 # since we're only evalutaing, not training
-    config["pretrained_path"]="checkpoints/p-enet_cityscapes_ft_200epochs_run1"
-    confmat=validate_one(config)
-    return confmat
 def train_main(config_filename, dataset, run):
     with open(config_filename) as file:
         config=yaml.full_load(file)
@@ -313,8 +273,7 @@ def train_main(config_filename, dataset, run):
 if __name__=='__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-c','--config', type=str, required=True)
-    parser.add_argument('-d','--dataset', type=str, required=True)
+    parser.add_argument('-d','--dataset_path', type=str, required=True)
     parser.add_argument('-r','--run', type=int, default=1)
     args = parser.parse_args()
     train_main(args.config, args.dataset, args.run)
-    validate_main(args.config, args.dataset)
