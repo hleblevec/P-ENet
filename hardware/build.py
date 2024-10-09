@@ -1,7 +1,6 @@
 import finn.builder.build_dataflow as build
 import finn.builder.build_dataflow_config as build_cfg
 from custom_steps import *
-import argparse
 
 build_dataflow_steps = [
     "step_qonnx_to_finn",
@@ -26,21 +25,17 @@ build_dataflow_steps = [
 ]
 
 def main(model, output, folding_config_file):
-    
-
     cfg = build.DataflowBuildConfig(
     output_dir          = output,
     synth_clk_period_ns = 3.3,
     target_fps          = 30,
     board               = "TySOM-3A-ZU19EG",
-    # board               = "ZCU104",
     shell_flow_type     = build_cfg.ShellFlowType.VIVADO_ZYNQ,
     steps               = build_dataflow_steps,
     folding_config_file = folding_config_file,
     split_large_fifos = True,
     auto_fifo_depths = False,
     large_fifo_mem_style = build_cfg.LargeFIFOMemStyle.URAM,
-    # force_rtl_conv_inp_gen = True,
     verbose = False,
     generate_outputs=[
         build_cfg.DataflowOutputType.ESTIMATE_REPORTS,
