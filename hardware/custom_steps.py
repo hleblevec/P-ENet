@@ -75,19 +75,13 @@ def custom_step_convert_to_hw(model: ModelWrapper, cfg: DataflowBuildConfig):
 
     model.set_tensor_datatype(model.graph.input[0].name, DataType["INT8"])
     model = model.transform(InferDataLayouts())
-
-    # model = model.transform(DoubleToSingleFloat())
     model = model.transform(InferDataTypes())
     model = model.transform(to_hw.InferAddStreamsLayer())
     model = model.transform(RoundAndClipThresholds())
-    # mem_mode = cfg.default_mem_mode.value
     model = model.transform(to_hw.InferQuantizedMatrixVectorActivation())
     model = model.transform(to_hw.InferThresholdingLayer())
-   
-    model = model.transform(to_hw.InferConvInpGen())
-            
+    model = model.transform(to_hw.InferConvInpGen())      
     model = model.transform(to_hw.InferUpsample())
-    
     model = model.transform(to_hw.InferDuplicateStreamsLayer())
     model = model.transform(absorb.AbsorbConsecutiveTransposes())
     model = model.transform(absorb.AbsorbTransposeIntoMultiThreshold())
