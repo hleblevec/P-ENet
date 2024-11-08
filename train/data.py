@@ -2,9 +2,7 @@ import transforms as T
 from data_utils import *
 from datasets.cityscapes import Cityscapes
 from datasets.camvid import Camvid
-from datasets.voc12 import Voc12Segmentation
-from datasets.coco import Coco
-from datasets.mapillary import Mapillary
+
 
 def build_val_transform(val_input_size,val_label_size):
     mean = (0.485, 0.456, 0.406)
