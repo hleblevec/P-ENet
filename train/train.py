@@ -276,4 +276,4 @@ if __name__=='__main__':
     parser.add_argument('-d','--dataset_path', type=str, required=True)
     parser.add_argument('-r','--run', type=int, default=1)
     args = parser.parse_args()
-    train_main(args.config, args.dataset, args.run)
+    train_main(args.config, args.dataset_path, args.run)
