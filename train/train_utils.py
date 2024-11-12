@@ -2,7 +2,8 @@ from losses import BootstrappedCE
 from lr_schedulers import poly_lr_scheduler,cosine_lr_scheduler,step_lr_scheduler,exp_lr_scheduler
 from data import get_cityscapes,get_camvid, build_val_transform,Cityscapes
 import torch
-from model.ENet import ENet
+from model.quant.ENet import ENet as QuantENet
+from model.float.ENet import ENet
 
 def get_lr_function(config,total_iterations):
     # get the learning rate multiplier function for LambdaLR
@@ -119,7 +120,12 @@ def get_model(config):
     model_type=config["model_type"]
     if model_type=="quantized":
         if config["model_name"]=="ENet":
-            return ENet(config, weight_bit_width = 4, act_bit_width = 4)
+            return QuantENet(config, weight_bit_width = 4, act_bit_width = 4)
+        else:
+            raise NotImplementedError()
+    elif model_type=="float":
+        if config["model_name"]=="ENet":
+            return ENet(config)
         else:
             raise NotImplementedError()
   

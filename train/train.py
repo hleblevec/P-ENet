@@ -57,8 +57,8 @@ def evaluate(model, data_loader, device, confmat,mixed_precision,print_every,max
             if (i+1)%print_every==0:
                 print(i+1)
             image, target = image.to(device), target.to(device)
-            # with amp.autocast(enabled=mixed_precision):
-            output = model(image)
+            with amp.autocast(enabled=mixed_precision):
+                output = model(image)
             output = torch.nn.functional.interpolate(output, size=target.shape[-2:], mode='bilinear', align_corners=False)
             confmat.update(target.flatten(), output.argmax(1).flatten())
             if i+1==max_eval:
@@ -71,9 +71,9 @@ def train_one_epoch(model, loss_fun, optimizer, loader, lr_scheduler, print_ever
     for t, x in enumerate(loader):
         image, target=x
         image, target = image.cuda(), target.cuda()
-        # with amp.autocast(enabled=mixed_precision):
-        output = model(image)
-        loss = loss_fun(output, target)
+        with amp.autocast(enabled=mixed_precision):
+            output = model(image)
+            loss = loss_fun(output, target)
         optimizer.zero_grad()
         scaler.scale(loss).backward()
         scaler.step(optimizer)
@@ -248,8 +248,6 @@ def train_one(config):
                 save(model, optimizer, lr_scheduler, epoch, save_best_path,best_mIU,scaler,run)
         if save_latest_path != "":
             save(model, optimizer, lr_scheduler, epoch, save_latest_path,best_mIU,scaler,run)
-        # if config["model_name"]=="exp26":
-        #     decode_dilations_exp26(model.body)
 
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
