@@ -23,7 +23,7 @@ warmup_iters: 3000
 warmup_factor: 0.1
 
 #TRAIN:
-mixed_precision: False
+mixed_precision: True
 run: 1
 RNG_seed: 0
 loss_type: cross_entropy
