@@ -1,5 +1,6 @@
 import finn.builder.build_dataflow as build
 import finn.builder.build_dataflow_config as build_cfg
+import argparse
 from custom_steps import *
 
 build_dataflow_steps = [
@@ -36,7 +37,6 @@ def main(model, output, folding_config_file):
     split_large_fifos = True,
     auto_fifo_depths = False,
     large_fifo_mem_style = build_cfg.LargeFIFOMemStyle.URAM,
-    verbose = False,
     generate_outputs=[
         build_cfg.DataflowOutputType.ESTIMATE_REPORTS,
         build_cfg.DataflowOutputType.BITFILE,
@@ -48,7 +48,10 @@ def main(model, output, folding_config_file):
     return
 
 if __name__ == '__main__':
-    model="models/p-enet.onnx"
-    output="output"
-    folding="configs/p-enet_m_config.json"
-    main(model, output, folding)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-m', '--model', type=str, required=True, help='Path to ONNX model.')
+    parser.add_argument('-f', '--folding', type=str, required=True, help = 'Path to JSON folding config file.')
+    parser.add_argument('-o', '--output_path', type=str, help='Output path', default='output')
+
+    args=parser.parse_args()
+    main(args.model, args.output_path, args.folding)
