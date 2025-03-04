@@ -49,8 +49,8 @@ def main(model, output, folding_config_file):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--model', type=str, required=True, help='Path to ONNX model.')
-    parser.add_argument('-f', '--folding', type=str, required=True, help = 'Path to JSON folding config file.')
+    parser.add_argument('-m', '--model', type=str, required=True, help='Path to ONNX model.', default='./models/p-enet_cityscapes.onnx')
+    parser.add_argument('-f', '--folding', type=str, required=True, help = 'Path to JSON folding config file.', default='./configs/p-enet_m_config.json')
     parser.add_argument('-o', '--output_path', type=str, help='Output path', default='output')
 
     args=parser.parse_args()
