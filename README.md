@@ -30,6 +30,11 @@ The deployment on TySOM-3A-ZU19EG is done using the FINN framework to generate t
 We use a modified version of the FINN repository that can be obtained by executing the `get_finn.sh` script.
 To build P-ENet_M, go in the finn folder and run
 ```
-./run-docker.sh build_custom ../
+./run-docker.sh
 ```
+Then within the docker environment go to the `hardware` directory and run:
+```
+python build.py -m models/p-enet_cityscapes.onnx -f configs/p-enet_m_config.json -o output
+```
+
 The generated outputs will be under the `output` directory.
