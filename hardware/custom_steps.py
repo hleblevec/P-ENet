@@ -78,6 +78,9 @@ def custom_step_convert_to_hw(model: ModelWrapper, cfg: DataflowBuildConfig):
     model = model.transform(InferDataTypes())
     model = model.transform(to_hw.InferAddStreamsLayer())
     model = model.transform(RoundAndClipThresholds())
+    if cfg.standalone_thresholds:
+        # doing this first causes all threshold layers to be standalone
+        model = model.transform(to_hw.InferThresholdingLayer())
     model = model.transform(to_hw.InferQuantizedMatrixVectorActivation())
     model = model.transform(to_hw.InferThresholdingLayer())
     model = model.transform(to_hw.InferConvInpGen())      
