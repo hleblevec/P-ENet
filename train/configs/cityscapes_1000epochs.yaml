@@ -4,6 +4,7 @@ model_type: quantized
 num_classes: 19
 ignore_value: 255
 pretrained_backbone: False
+change_num_classes: False
 
 #OPTIM:
 epochs: 1000

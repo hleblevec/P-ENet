@@ -105,12 +105,11 @@ def validate_one(config):
     print(confmat)
     return confmat
 
-def validate_main(config, pretrained_path, batchsize):
+def validate_main(config, pretrained_path, dataset_path, batchsize):
     config_filename=config
     with open(config_filename) as file:
         config=yaml.full_load(file)
-    # config["dataset_dir"]="/nasbrain/datasets/cityscapes"
-    config["dataset_dir"]="/users2/local/datasets/cityscapes"
+    config["dataset_dir"]=dataset_path
     config["class_uniform_pct"]=0 # since we're only evalutaing, not training
     config["pretrained_path"]=pretrained_path
     config["batch_size"]=batchsize
@@ -122,6 +121,7 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-c','--config', type=str, required=True)
     parser.add_argument('-p','--pretrained_path', type=str, required=True)
+    parser.add_argument('-d','--dataset_path', type=str, required=True)
     parser.add_argument('-b','--batchsize', type=int, default=1)
     args = parser.parse_args()
-    validate_main(args.config, args.pretrained_path, args.batchsize)
+    validate_main(args.config, args.pretrained_path, args.dataset_path, args.batchsize)
